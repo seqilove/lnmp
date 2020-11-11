@@ -1,13 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 Install_PHPMemcache()
 {
     echo "Install memcache php extension..."
     cd ${cur_dir}/src
     if echo "${Cur_PHP_Version}" | grep -Eqi '^7.';then
-        rm -rf pecl-memcache
-        git clone https://github.com/websupport-sk/pecl-memcache.git
-        cd pecl-memcache
+        Download_Files ${Download_Mirror}/web/memcache/${PHP7Memcache_Ver}.tgz ${PHP7Memcache_Ver}.tgz
+        Tar_Cd ${PHP7Memcache_Ver}.tgz ${PHP7Memcache_Ver}
     else
         Download_Files ${Download_Mirror}/web/memcache/${PHPMemcache_Ver}.tgz ${PHPMemcache_Ver}.tgz
         Tar_Cd ${PHPMemcache_Ver}.tgz ${PHPMemcache_Ver}
@@ -26,7 +25,7 @@ Install_PHPMemcached()
     if [ "$PM" = "yum" ]; then
         yum install cyrus-sasl-devel -y
         Get_Dist_Version
-        if echo "${CentOS_Version}" | grep -Eqi '^5.'; then
+        if echo "${CentOS_Version}" | grep -Eqi '^5'; then
             yum install gcc44 gcc44-c++ libstdc++44-devel -y
             export CC="gcc44"
             export CXX="g++44"
@@ -36,7 +35,7 @@ Install_PHPMemcached()
     fi
     Download_Files ${Download_Mirror}/web/libmemcached/${Libmemcached_Ver}.tar.gz
     Tar_Cd ${Libmemcached_Ver}.tar.gz ${Libmemcached_Ver}
-    if gcc -dumpversion|grep -q "^[78]"; then
+    if gcc -dumpversion|grep -Eq "^[7-9]|10"; then
         patch -p1 < ${cur_dir}/src/patch/libmemcached-1.0.18-gcc7.patch
     fi
     ./configure --prefix=/usr/local/libmemcached --with-memcached
@@ -61,7 +60,7 @@ Install_Memcached()
 {
     ver="1"
     echo "Which memcached php extension do you choose:"
-    echo "Install php-memcache,(Discuz x) please enter: 1"
+    echo "Install php-memcache, please enter: 1"
     echo "Install php-memcached, please enter: 2"
     read -p "Enter 1 or 2 (Default 1): " ver
 

@@ -1,11 +1,4 @@
-#!/bin/bash
-
-Deb_Check_MySQL()
-{
-    apt-get purge -y mysql-client mysql-server mysql-common mysql-server-core-5.5 mysql-client-5.5
-    rm -f /etc/my.cnf
-    rm -rf /etc/mysql/
-}
+#!/usr/bin/env bash
 
 MySQL_ARM_Patch()
 {
@@ -17,8 +10,8 @@ MySQL_ARM_Patch()
 
 MySQL_Gcc7_Patch()
 {
-    if gcc -dumpversion|grep -q "^[78]"; then
-        echo "gcc version: 7"
+    if gcc -dumpversion|grep -Eq "^[7-9]|10"; then
+        echo "gcc version: 7+"
         if [ "${DBSelect}" = "1" ] || echo "${mysql_version}" | grep -Eqi '^5.1.'; then
             patch -p1 < ${cur_dir}/src/patch/mysql-5.1-mysql-gcc7.patch
         elif [ "${DBSelect}" = "2" ] || echo "${mysql_version}" | grep -Eqi '^5.5.'; then
@@ -385,6 +378,7 @@ EOF
     /usr/local/mysql/scripts/mysql_install_db --defaults-file=/etc/my.cnf --basedir=/usr/local/mysql --datadir=${MySQL_Data_Dir} --user=mysql
     chgrp -R mysql /usr/local/mysql/.
     \cp support-files/mysql.server /etc/init.d/mysql
+    \cp ${cur_dir}/init.d/mysql.service /etc/systemd/system/mysql.service
     chmod 755 /etc/init.d/mysql
 
     cat > /etc/ld.so.conf.d/mysql.conf<<EOF
@@ -515,6 +509,7 @@ EOF
     /usr/local/mysql/scripts/mysql_install_db --defaults-file=/etc/my.cnf --basedir=/usr/local/mysql --datadir=${MySQL_Data_Dir} --user=mysql
     chgrp -R mysql /usr/local/mysql/.
     \cp support-files/mysql.server /etc/init.d/mysql
+    \cp ${cur_dir}/init.d/mysql.service /etc/systemd/system/mysql.service
     chmod 755 /etc/init.d/mysql
 
     cat > /etc/ld.so.conf.d/mysql.conf<<EOF
@@ -612,6 +607,7 @@ EOF
     /usr/local/mysql/bin/mysqld --initialize-insecure --basedir=/usr/local/mysql --datadir=${MySQL_Data_Dir} --user=mysql
     chgrp -R mysql /usr/local/mysql/.
     \cp support-files/mysql.server /etc/init.d/mysql
+    \cp ${cur_dir}/init.d/mysql.service /etc/systemd/system/mysql.service
     chmod 755 /etc/init.d/mysql
 
     cat > /etc/ld.so.conf.d/mysql.conf<<EOF
@@ -710,6 +706,7 @@ EOF
     /usr/local/mysql/bin/mysqld --initialize-insecure --basedir=/usr/local/mysql --datadir=${MySQL_Data_Dir} --user=mysql
     chgrp -R mysql /usr/local/mysql/.
     \cp support-files/mysql.server /etc/init.d/mysql
+    \cp ${cur_dir}/init.d/mysql.service /etc/systemd/system/mysql.service
     chmod 755 /etc/init.d/mysql
 
     cat > /etc/ld.so.conf.d/mysql.conf<<EOF

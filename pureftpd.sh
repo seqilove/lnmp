@@ -1,6 +1,5 @@
-#!/bin/bash
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
-export PATH
+#!/usr/bin/env bash
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 
 # Check if user is root
 if [ $(id -u) != "0" ]; then
@@ -61,6 +60,7 @@ Install_Pureftpd()
         rm -f /etc/init.d/pureftpd
     fi
     \cp ${cur_dir}/init.d/init.d.pureftpd /etc/init.d/pureftpd
+    \cp ${cur_dir}/init.d/pureftpd.service /etc/systemd/system/pureftpd.service
     chmod +x /etc/init.d/pureftpd
     touch /usr/local/pureftpd/etc/pureftpd.passwd
     touch /usr/local/pureftpd/etc/pureftpd.pdb

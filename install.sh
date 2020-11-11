@@ -1,6 +1,5 @@
-#!/bin/bash
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
-export PATH
+#!/usr/bin/env bash
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 
 # Check if user is root
 if [ $(id -u) != "0" ]; then
@@ -62,6 +61,7 @@ Init_Install()
     Get_Dist_Version
     Print_Sys_Info
     Check_Hosts
+    Check_CMPT
     if [ "${CheckMirror}" != "n" ]; then
         Check_Mirror
     fi
@@ -101,7 +101,6 @@ Init_Install()
         CentOS_Lib_Opt
     elif [ "$PM" = "apt" ]; then
         Deb_Lib_Opt
-        Deb_Check_MySQL
     fi
     if [ "${DBSelect}" = "1" ]; then
         Install_MySQL_51
@@ -116,13 +115,13 @@ Init_Install()
     elif [ "${DBSelect}" = "6" ]; then
         Install_MariaDB_5
     elif [ "${DBSelect}" = "7" ]; then
-        Install_MariaDB_10
-    elif [ "${DBSelect}" = "8" ]; then
         Install_MariaDB_101
-    elif [ "${DBSelect}" = "9" ]; then
+    elif [ "${DBSelect}" = "8" ]; then
         Install_MariaDB_102
-    elif [ "${DBSelect}" = "10" ]; then
+    elif [ "${DBSelect}" = "9" ]; then
         Install_MariaDB_103
+    elif [ "${DBSelect}" = "10" ]; then
+        Install_MariaDB_104
     fi
     TempMycnf_Clean
     Clean_DB_Src_Dir

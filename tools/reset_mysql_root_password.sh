@@ -1,6 +1,5 @@
-#!/bin/bash
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
-export PATH
+#!/usr/bin/env bash
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 
 # Check if user is root
 if [ $(id -u) != "0" ]; then
@@ -45,7 +44,7 @@ echo "Starting ${DB_Name} with skip grant tables"
 /usr/local/${DB_Name}/bin/mysqld_safe --skip-grant-tables >/dev/null 2>&1 &
 sleep 5
 echo "update ${DB_Name} root password..."
-if echo "${DB_Ver}" | grep -Eqi '^8.0.|^5.7.|^10.2.'; then
+if echo "${DB_Ver}" | grep -Eqi '^8.0.|^5.7.|^10.[234].'; then
     /usr/local/${DB_Name}/bin/mysql -u root << EOF
 FLUSH PRIVILEGES;
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_Root_Password}';
@@ -58,7 +57,11 @@ fi
 
 if [ $? -eq 0 ]; then
     echo "Password reset succesfully. Now killing mysqld softly"
-    killall mysqld
+    if command -v killall >/dev/null 2>&1; then
+        killall mysqld
+    else
+        kill `pidof mysqld`
+    fi
     sleep 5
     echo "Restarting the actual ${DB_Name} service"
     /etc/init.d/${DB_Name} start
